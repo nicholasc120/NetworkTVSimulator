@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Network TV Simulator</title>
+    <style>
+        li {
+            margin-bottom: 10px;
+        }
+
+        li button {
+            font-size: 12px;
+            margin-left: 20px;
+            color: #666;
+        }
+    </style>
+</head>
+
+<body>
+
+    <h1>Add New Show</h1>
+
+    <div>
+        Format is "https://www.netflix.com/watch/70152005"
+        or "https://www.netflix.com/watch/70251220"
+        <br>
+        <label for="name">Show Name:</label>
+        <input type="text" name="name" id="name">
+        <label for="link">Show link:</label>
+        <input type="text" name="link" id="link">
+        <select name="length" id="length">
+            <option value="22">22</option>
+            <option value="42">42</option>
+        </select>
+        <label for="length">mins</label>
+        <button id="add">Add</button>
+    </div>
+
+    <h1>Now Showing:</h1>
+
+    <ul>
+    </ul>
+
+    <button id="start">Start Watching</button>
+    <script>
+        const showsAndData = [];
+        let index = 0;
+
+        const list = document.querySelector('ul');
+        const showName = document.getElementById('name');
+        const showLink = document.getElementById('link');
+        const showLength = document.getElementById('length');
+        const addButton = document.getElementById('add');
+        const startButton = document.getElementById("start");
+        let myWindow;
+
+        function start() {
+            myWindow.close();
+            incrementEpisode();
+            myWindow = window.open("https://www.netflix.com/watch/" + showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
+            setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
+        }
+
+        startButton.addEventListener('click', () => {
+            startButton.disabled = true;
+            myWindow = window.open("https://www.netflix.com/watch/" + showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
+            setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
+        });
+
+        addButton.addEventListener('click', () => {
+            if (showName.value != '' && showLink.value != '') {
+                showsAndData.push({
+                    "name": showName.value,
+                    "link": parseInt(showLink.value.replace("https://www.netflix.com/watch/", "")),
+                    "showLength": parseInt(showLength.value)
+                });
+
+                const myItem = showName.value;
+                showName.value = '';
+                showLink.value = '';
+
+                const listItem = document.createElement('li');
+                const listText = document.createElement('span');
+                const listBtn = document.createElement('button');
+
+                listItem.appendChild(listText);
+                listText.textContent = myItem;
+                listItem.appendChild(listBtn);
+                listBtn.textContent = 'Delete';
+                list.appendChild(listItem);
+
+                listBtn.addEventListener('click', () => {
+                    for (const showData of showsAndData) {
+                        if (showData.name == listItem.textContent) {
+                            list.removeChild(listItem);
+
+                            var index = showsAndData.indexOf(showData);
+                            showsAndData.splice(index, 1);
+                        }
+                    }
+                });
+                showName.focus();
+            }
+        });
+
+        function incrementEpisode() {
+            showsAndData[index].link++;
+            index++;
+            if (index == showsAndData.length) {
+                index = 0;
+            }
+        }
+    </script>
+</body>
+
+</html>
