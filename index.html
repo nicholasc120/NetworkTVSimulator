@@ -166,6 +166,7 @@
         let timeoutHandle;
 
         let myWindow;
+
         function showfield(name) {
             if (name == 'Other') {
                 document.getElementById('div1').innerHTML = 'Other (Minutes): <input type="text" id="OtherShowLength" class="form-control"/>';
@@ -174,6 +175,7 @@
                 document.getElementById('div1').innerHTML = '';
             }
         }
+
         function restartEpisode() {
             myWindow = window.open(showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
         }
