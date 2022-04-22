@@ -82,7 +82,7 @@
                         <label class="col-sm-2 col-form-label" for="name">Show Name:</label>
                         <div class="col-sm-10">
                             <input class="form-control" type="text" name="name" id="name"
-                                placeholder="Parks and Recreation">
+                                placeholder="Parks and Recreation" required>
                         </div>
                     </div>
 
@@ -95,17 +95,20 @@
                             and add it
                             here!
                             <input class="form-control" type="text" name="link" id="link"
-                                placeholder="https://www.netflix.com/watch/70152005">
+                                placeholder="https://www.netflix.com/watch/70152005" required>
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label" for="name">Show Episode Length</label>
                         <div class="col-sm-10">
-                            <select class="form-control" name="length" id="length">
+                            <select class="form-control" name="length" id="length"
+                                onchange="showfield(this.options[this.selectedIndex].value)">
                                 <option value="22">22 minutes</option>
                                 <option value="42">42 minutes</option>
+                                <option value="Other">Other</option>
                             </select>
+                            <div id="div1"></div>
                             The next show will be switched to after this interval has ended.
                         </div>
                     </div>
@@ -146,6 +149,14 @@
         const startButton = document.getElementById("start");
 
         let myWindow;
+        function showfield(name) {
+            if (name == 'Other') {
+                document.getElementById('div1').innerHTML = 'Other (Minutes): <input type="text" id="OtherShowLength" class="form-control"/>';
+            }
+            else {
+                document.getElementById('div1').innerHTML = '';
+            }
+        }
 
         function playNextEpisode() {
             myWindow = window.open(showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
@@ -175,10 +186,30 @@
                 }
 
                 startButton.disabled = false;
+
+                let length;
+                if (isNaN(parseInt(showLength.value))) {
+                    if (showLength.value == "Other") {
+                        const otherLengthBox = document.getElementById("OtherShowLength");
+                        length = parseInt(otherLengthBox.value);
+                        if (isNaN(length)) {
+                            alert("invalid length");
+                            return;
+                        }
+                        document.getElementById('div1').innerHTML = '';
+                        showLength.value = "22 minutes";
+                    } else {
+                        alert("invalid length");
+                        return;
+                    }
+                } else {
+                    length = parseInt(showLength.value);
+                }
+
                 showsAndData.push({
                     "name": showName.value,
                     "link": showLink.value,
-                    "showLength": parseInt(showLength.value),
+                    "showLength": length,
                     "site": showSite.value
                 });
 
@@ -200,7 +231,7 @@
         function incrementEpisode() {
             if (showsAndData[index].site == "netflix") {
                 let videoNumber = parseInt(showsAndData[index].link.replace("https://www.netflix.com/watch/", ""));
-                showsAndData[index].link = "https://www.netflix.com/watch/" + videoNumber++;
+                showsAndData[index].link = "https://www.netflix.com/watch/" + ++videoNumber;
             }
             index++;
             if (index == showsAndData.length) {
