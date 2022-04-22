@@ -174,9 +174,13 @@
                 document.getElementById('div1').innerHTML = '';
             }
         }
+        function restartEpisode() {
+            myWindow = window.open(showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
+        }
 
         function playNextEpisode() {
             myWindow = window.open(showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
+
             let list = document.getElementById('upNextList');
             if (list.querySelector('li')) {
                 list.querySelector('li').remove();
@@ -210,19 +214,13 @@
             if (myWindow) {
                 myWindow.close();
             }
-            playNextEpisode();
+            restartEpisode();
             timeoutHandle = setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
         });
 
         nextEpisodeButton.addEventListener('click', () => {
             clearTimeout(timeoutHandle);
-
-            if (myWindow) {
-                myWindow.close();
-            }
-            incrementEpisode();
-            playNextEpisode();
-            timeoutHandle = setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
+            start();
         });
 
         startButton.addEventListener('click', () => {
