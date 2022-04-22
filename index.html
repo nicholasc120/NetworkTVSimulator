@@ -186,7 +186,9 @@
         }
 
         function start() {
-            myWindow.close();
+            if (myWindow) {
+                myWindow.close();
+            }
             incrementEpisode();
             playNextEpisode();
             setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
@@ -208,12 +210,13 @@
             const showSite = document.getElementById('site');
 
             if (showName.value != '' && showLink.value != '') {
-                if (showSite.value == "Netflix") {
-                    let re = new RegExp("https:\/\/www\.netflix\.com\/watch\/[0-9]+");
+                if (showSite.value == "netflix") {
+                    let re = new RegExp("https:\/\/www\.netflix\.com\/watch\/[0-9]+$");
                     if (!re.test(showLink.value)) {
-                        alert("invalid URL");
+                        alert("invalid URL format. Please follow the specified format.");
                         return;
                     }
+                    showLink.value += "?t=0";
                 }
 
                 startButton.disabled = false;
@@ -266,7 +269,7 @@
         function incrementEpisode() {
             if (showsAndData[index].site == "netflix") {
                 let videoNumber = parseInt(showsAndData[index].link.replace("https://www.netflix.com/watch/", ""));
-                showsAndData[index].link = "https://www.netflix.com/watch/" + ++videoNumber;
+                showsAndData[index].link = "https://www.netflix.com/watch/" + ++videoNumber + "?t=0";
             }
 
             let list = document.getElementById('upNextList');
