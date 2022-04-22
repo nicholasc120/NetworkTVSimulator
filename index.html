@@ -5,48 +5,117 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Network TV Simulator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
     <style>
-        li {
-            margin-bottom: 10px;
+        h1 {
+            font-family: 'Bebas Neue', cursive;
         }
 
-        li button {
-            font-size: 12px;
-            margin-left: 20px;
-            color: #666;
+        body {
+            width: 70%;
+            margin-left: auto;
+            margin-right: auto;
+            background-image: url("Images/redCarpet.jpg");
+            background-repeat: no-repeat;
+            background-size: cover;
+            font-family: 'Anton', sans-serif;
+        }
+
+        .content {
+            position: absolute;
+            height: 100%;
+            width: 70%;
+            background-color: #E50914;
+            border-style: inset;
+            overflow-y: auto;
+        }
+
+        .body-content {
+            margin: 10% 12% 10%;
         }
     </style>
 </head>
 
 <body>
+    <div class="content">
+        <div class="body-content">
+            <h1 class="text-center">Netflix Network TV Simulator</h1>
+            <p>How often do you find yourself binging an entire series worth of content, only to get burnt out and never
+                finish? What if there was a way to rotate through all the shows you want to watch, all without needing
+                to
+                press
+                a single key or get up from the couch?</p>
+            <p>
+                Now there is! With this site, you'll be able to set up a rotation of shows, and watch that queue on loop
+                to
+                your
+                hearts content. No more, "I'm so sick of this show, I have to watch something else." Now you can watch
+                <i>New
+                    Girl</i>, <i>The Office</i>,
+                <i>Community</i>, or anything else, all at the same time, without having to manage a thing!
+            </p>
+            <h1 class="text-center">Add New Show</h1>
 
-    <h1>Add New Show</h1>
+            <div>
+                <form>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="name">Show Name:</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" name="name" id="name"
+                                placeholder="Parks and Recreation">
+                        </div>
+                    </div>
 
-    <div>
-        Format is "https://www.netflix.com/watch/70152005"
-        or "https://www.netflix.com/watch/70251220" for Netflix.
-        <br>
-        <label for="name">Show Name:</label>
-        <input type="text" name="name" id="name">
-        <label for="link">Show link:</label>
-        <input type="text" name="link" id="link">
-        <select name="length" id="length">
-            <option value="22">22</option>
-            <option value="42">42</option>
-        </select>
-        <label for="length">mins</label>
-        <select name="site" id="site">
-            <option value="netflix">Netflix</option>
-        </select>
-        <button id="add">Add</button>
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="name">Show Link:</label>
+                        <div class="col-sm-10">
+                            <img src="./Images/netflix.PNG">
+                            <br>
+                            Open the show you want to add to your rotation (the specific episode you want to start with)
+                            and add it
+                            here!
+                            <input class="form-control" type="text" name="link" id="link"
+                                placeholder="https://www.netflix.com/watch/70152005">
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="name">Show Episode Length</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="length" id="length">
+                                <option value="22">22 minutes</option>
+                                <option value="42">42 minutes</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label class="col-sm-2 col-form-label" for="name">Streaming service</label>
+                        <div class="col-sm-10">
+                            <select class="form-control" name="site" id="site">
+                                <option value="netflix">Netflix</option>
+                            </select>
+                        </div>
+                    </div>
+                </form>
+                <button id="add" class="btn btn-success text-right">Add</button>
+            </div>
+
+
+            <h1 class="text-center">Now Showing:</h1>
+
+            <ul class="list-group">
+            </ul>
+
+            <br>
+            <button id="start" disabled class="btn btn-primary">Start Watching!</button>
+        </div>
     </div>
-
-    <h1>Now Showing:</h1>
-
-    <ul>
-    </ul>
-
-    <button id="start" disabled>Start Watching</button>
     <script>
         const showsAndData = [];
         let index = 0;
@@ -80,6 +149,14 @@
 
         addButton.addEventListener('click', () => {
             if (showName.value != '' && showLink.value != '') {
+                if (showSite.value == "Netflix") {
+                    var re = new RegExp("https:\/\/www\.netflix\.com\/watch\/[0-9]+");
+                    if (!re.test(showLink.value)) {
+                        alert("invalid URL");
+                        return;
+                    }
+                }
+
                 startButton.disabled = false;
                 showsAndData.push({
                     "name": showName.value,
@@ -94,7 +171,7 @@
 
                 const listItem = document.createElement('li');
                 const listText = document.createElement('span');
-
+                listItem.classList.add("list-group-item");
                 listItem.appendChild(listText);
                 listText.textContent = myItem;
                 list.appendChild(listItem);
