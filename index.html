@@ -35,6 +35,10 @@
             <option value="42">42</option>
         </select>
         <label for="length">mins</label>
+        <select name="site" id="site">
+            <option value="netflix">Netflix</option>
+            <option value="disney">Disney+</option>
+        </select>
         <button id="add">Add</button>
     </div>
 
@@ -52,20 +56,37 @@
         const showName = document.getElementById('name');
         const showLink = document.getElementById('link');
         const showLength = document.getElementById('length');
+        const showSite = document.getElementById('site');
         const addButton = document.getElementById('add');
         const startButton = document.getElementById("start");
+
         let myWindow;
+
+        function playNextEpisode() {
+            myWindow = window.open(showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
+
+            myWindow.addEventListener('load', () => {
+                console.log("in here");
+                if (showsAndData[index].site == "disney") {
+                    console.log(myWindow.document.title);
+                    let playButton = myWindow.document.getElementsByClassName("button-play");
+                    console.log(playButton.length);
+                    //playButton[0].click();
+                }
+            }, true);
+
+        }
 
         function start() {
             myWindow.close();
             incrementEpisode();
-            myWindow = window.open("https://www.netflix.com/watch/" + showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
+            playNextEpisode();
             setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
         }
 
         startButton.addEventListener('click', () => {
             startButton.disabled = true;
-            myWindow = window.open("https://www.netflix.com/watch/" + showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
+            playNextEpisode();
             setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
         });
 
@@ -73,8 +94,9 @@
             if (showName.value != '' && showLink.value != '') {
                 showsAndData.push({
                     "name": showName.value,
-                    "link": parseInt(showLink.value.replace("https://www.netflix.com/watch/", "")),
-                    "showLength": parseInt(showLength.value)
+                    "link": showLink.value,
+                    "showLength": parseInt(showLength.value),
+                    "site": showSite.value
                 });
 
                 const myItem = showName.value;
@@ -106,7 +128,10 @@
         });
 
         function incrementEpisode() {
-            showsAndData[index].link++;
+            if (showsAndData[index].site == "netflix") {
+                let videoNumber = parseInt(showsAndData[index].link.replace("https://www.netflix.com/watch/", ""));
+                showsAndData[index].link = "https://www.netflix.com/watch/" + videoNumber++;
+            }
             index++;
             if (index == showsAndData.length) {
                 index = 0;
