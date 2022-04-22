@@ -45,9 +45,8 @@
         <div class="body-content">
             <h1 class="text-center">Netflix Network TV Simulator</h1>
             <p style="background-color: rgb(238, 255, 161);" class="text-center">You need to enable popups for this site
-                to work. <span style="color:red">If this is your first time on the site, you may need to reload after
-                    enabling
-                    pop-ups</span></p>
+                to work. <span style="color:red">If this is your first time on the site, you may need to restart the
+                    current episode after enabling pop-ups</span></p>
             <p>How often do you find yourself binging an entire series worth of content, only to get burnt out and never
                 finish? What if there was a way to rotate through all the shows you want to watch, all without needing
                 to
@@ -131,6 +130,13 @@
                 <h1 class="text-center" id="nowShowingTitle"></h1>
                 <ul class="list-group" id="nowShowingList">
                 </ul>
+                <br>
+                <div class="container">
+                    <div class="col-md-12 text-center">
+                        <button id="restart" disabled class="btn btn-secondary">Restart Current Episode</button>
+                        <button id="nextEpisode" disabled class="btn btn-info">Play Next Episode</button>
+                    </div>
+                </div>
             </div>
             <br>
             <div>
@@ -152,8 +158,12 @@
         const startButton = document.getElementById("start");
         const addButton = document.getElementById('add');
 
+        const restartButton = document.getElementById("restart");
+        const nextEpisodeButton = document.getElementById('nextEpisode');
+
         const showsAndData = [];
         let index = 0;
+        let timeoutHandle;
 
         let myWindow;
         function showfield(name) {
@@ -191,15 +201,40 @@
             }
             incrementEpisode();
             playNextEpisode();
-            setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
+            timeoutHandle = setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
         }
+
+        restartButton.addEventListener('click', () => {
+            clearTimeout(timeoutHandle);
+
+            if (myWindow) {
+                myWindow.close();
+            }
+            playNextEpisode();
+            timeoutHandle = setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
+        });
+
+        nextEpisodeButton.addEventListener('click', () => {
+            clearTimeout(timeoutHandle);
+
+            if (myWindow) {
+                myWindow.close();
+            }
+            incrementEpisode();
+            playNextEpisode();
+            timeoutHandle = setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
+        });
 
         startButton.addEventListener('click', () => {
             startButton.disabled = true;
+
+            restartButton.disabled = false;
+            nextEpisodeButton.disabled = false;
+
             document.getElementById("nowShowingTitle").innerText = "Now Showing:";
             document.getElementById("addNewShow").innerHTML = "";
             playNextEpisode();
-            setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
+            timeoutHandle = setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
         });
 
         addButton.addEventListener('click', () => {
