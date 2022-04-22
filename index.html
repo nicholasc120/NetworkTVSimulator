@@ -24,7 +24,7 @@
 
     <div>
         Format is "https://www.netflix.com/watch/70152005"
-        or "https://www.netflix.com/watch/70251220"
+        or "https://www.netflix.com/watch/70251220" for Netflix.
         <br>
         <label for="name">Show Name:</label>
         <input type="text" name="name" id="name">
@@ -37,7 +37,6 @@
         <label for="length">mins</label>
         <select name="site" id="site">
             <option value="netflix">Netflix</option>
-            <option value="disney">Disney+</option>
         </select>
         <button id="add">Add</button>
     </div>
@@ -47,7 +46,7 @@
     <ul>
     </ul>
 
-    <button id="start">Start Watching</button>
+    <button id="start" disabled>Start Watching</button>
     <script>
         const showsAndData = [];
         let index = 0;
@@ -64,17 +63,6 @@
 
         function playNextEpisode() {
             myWindow = window.open(showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
-
-            myWindow.addEventListener('load', () => {
-                console.log("in here");
-                if (showsAndData[index].site == "disney") {
-                    console.log(myWindow.document.title);
-                    let playButton = myWindow.document.getElementsByClassName("button-play");
-                    console.log(playButton.length);
-                    //playButton[0].click();
-                }
-            }, true);
-
         }
 
         function start() {
@@ -92,6 +80,7 @@
 
         addButton.addEventListener('click', () => {
             if (showName.value != '' && showLink.value != '') {
+                startButton.disabled = false;
                 showsAndData.push({
                     "name": showName.value,
                     "link": showLink.value,
@@ -105,24 +94,11 @@
 
                 const listItem = document.createElement('li');
                 const listText = document.createElement('span');
-                const listBtn = document.createElement('button');
 
                 listItem.appendChild(listText);
                 listText.textContent = myItem;
-                listItem.appendChild(listBtn);
-                listBtn.textContent = 'Delete';
                 list.appendChild(listItem);
 
-                listBtn.addEventListener('click', () => {
-                    for (const showData of showsAndData) {
-                        if (showData.name == listItem.textContent) {
-                            list.removeChild(listItem);
-
-                            var index = showsAndData.indexOf(showData);
-                            showsAndData.splice(index, 1);
-                        }
-                    }
-                });
                 showName.focus();
             }
         });
