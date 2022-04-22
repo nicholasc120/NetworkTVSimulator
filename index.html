@@ -72,9 +72,9 @@
                 then the <b>next</b> episode of <i>New Girl</i>, then the <b>next</b> episode of <i>The Office</i>, and
                 so on.
             </p>
-            <h1 class="text-center">Add New Show</h1>
 
-            <div>
+            <div id="addNewShow">
+                <h1 class="text-center">Add New Show</h1>
                 <form>
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label" for="name">Show Name:</label>
@@ -141,16 +141,11 @@
         </div>
     </div>
     <script>
+        const startButton = document.getElementById("start");
+        const addButton = document.getElementById('add');
+
         const showsAndData = [];
         let index = 0;
-
-        const list = document.getElementById('upNextList');
-        const showName = document.getElementById('name');
-        const showLink = document.getElementById('link');
-        const showLength = document.getElementById('length');
-        const showSite = document.getElementById('site');
-        const addButton = document.getElementById('add');
-        const startButton = document.getElementById("start");
 
         let myWindow;
         function showfield(name) {
@@ -192,11 +187,18 @@
         startButton.addEventListener('click', () => {
             startButton.disabled = true;
             document.getElementById("nowShowingTitle").innerText = "Now Showing:";
+            document.getElementById("addNewShow").innerHTML = "";
             playNextEpisode();
             setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
         });
 
         addButton.addEventListener('click', () => {
+            const list = document.getElementById('upNextList');
+            const showName = document.getElementById('name');
+            const showLink = document.getElementById('link');
+            const showLength = document.getElementById('length');
+            const showSite = document.getElementById('site');
+
             if (showName.value != '' && showLink.value != '') {
                 if (showSite.value == "Netflix") {
                     let re = new RegExp("https:\/\/www\.netflix\.com\/watch\/[0-9]+");
