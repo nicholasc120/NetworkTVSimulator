@@ -45,7 +45,7 @@
         <div class="body-content">
             <h1 class="text-center">Netflix Network TV Simulator</h1>
             <p style="background-color: rgb(238, 255, 161);" class="text-center">You need to enable popups for this site
-                to work. <span style="color:red">If this is your first time on the site, you may need to restart after
+                to work. <span style="color:red">If this is your first time on the site, you may need to reload after
                     enabling
                     pop-ups</span></p>
             <p>How often do you find yourself binging an entire series worth of content, only to get burnt out and never
@@ -120,14 +120,20 @@
                         </div>
                     </div>
                 </form>
-                <button id="add" class="btn btn-success text-right">Add</button>
+                <button id="add" class="btn btn-success text-right">Add to Queue</button>
             </div>
 
-
-            <h1 class="text-center">Now Showing:</h1>
-
-            <ul class="list-group">
-            </ul>
+            <div>
+                <h1 class="text-center" id="nowShowingTitle"></h1>
+                <ul class="list-group" id="nowShowingList">
+                </ul>
+            </div>
+            <br>
+            <div>
+                <h1 class="text-center">Up Next:</h1>
+                <ul class="list-group" id="upNextList">
+                </ul>
+            </div>
 
             <br>
             <button id="start" disabled class="btn btn-primary">Start Watching!</button>
@@ -138,7 +144,7 @@
         const showsAndData = [];
         let index = 0;
 
-        const list = document.querySelector('ul');
+        const list = document.getElementById('upNextList');
         const showName = document.getElementById('name');
         const showLink = document.getElementById('link');
         const showLength = document.getElementById('length');
@@ -158,6 +164,22 @@
 
         function playNextEpisode() {
             myWindow = window.open(showsAndData[index].link, "_blank", "toolbar=yes,scrollbars=yes,resizable=yes");
+            let list = document.getElementById('upNextList');
+            if (list.querySelector('li')) {
+                list.querySelector('li').remove();
+            }
+
+            list = document.getElementById('nowShowingList');
+            if (list.querySelector('li')) {
+                list.querySelector('li').remove();
+            }
+
+            const listItem = document.createElement('li');
+            const listText = document.createElement('span');
+            listItem.classList.add("list-group-item");
+            listItem.appendChild(listText);
+            listText.textContent = showsAndData[index].name;
+            list.appendChild(listItem);
         }
 
         function start() {
@@ -169,6 +191,7 @@
 
         startButton.addEventListener('click', () => {
             startButton.disabled = true;
+            document.getElementById("nowShowingTitle").innerText = "Now Showing:";
             playNextEpisode();
             setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
         });
@@ -176,7 +199,7 @@
         addButton.addEventListener('click', () => {
             if (showName.value != '' && showLink.value != '') {
                 if (showSite.value == "Netflix") {
-                    var re = new RegExp("https:\/\/www\.netflix\.com\/watch\/[0-9]+");
+                    let re = new RegExp("https:\/\/www\.netflix\.com\/watch\/[0-9]+");
                     if (!re.test(showLink.value)) {
                         alert("invalid URL");
                         return;
@@ -192,6 +215,10 @@
                         length = parseInt(otherLengthBox.value);
                         if (isNaN(length)) {
                             alert("invalid length");
+                            return;
+                        }
+                        if (length < 2) {
+                            alert("Please set length to a value greater than or equal to 2");
                             return;
                         }
                         document.getElementById('div1').innerHTML = '';
@@ -231,6 +258,16 @@
                 let videoNumber = parseInt(showsAndData[index].link.replace("https://www.netflix.com/watch/", ""));
                 showsAndData[index].link = "https://www.netflix.com/watch/" + ++videoNumber;
             }
+
+            let list = document.getElementById('upNextList');
+
+            const listItem = document.createElement('li');
+            const listText = document.createElement('span');
+            listItem.classList.add("list-group-item");
+            listItem.appendChild(listText);
+            listText.textContent = showsAndData[index].name;
+            list.appendChild(listItem);
+
             index++;
             if (index == showsAndData.length) {
                 index = 0;
