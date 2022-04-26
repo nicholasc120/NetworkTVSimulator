@@ -5,7 +5,7 @@
     <link rel="icon" href="./Images/favicon.png" type="image/x-icon" />
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Netflix Network TV Simulator</title>
+    <title>Streaming Service Queue Creator</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
         integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -29,7 +29,7 @@
             position: absolute;
             height: 100%;
             width: 70%;
-            background-color: #E50914;
+            background-color: #69c8ff;
             border-style: inset;
             overflow-y: auto;
         }
@@ -43,35 +43,20 @@
 <body>
     <div class="content">
         <div class="body-content">
-            <h1 class="text-center">Netflix Network TV Simulator</h1>
+            <h1 class="text-center">Streaming Service Queue Creator</h1>
             <p style="background-color: rgb(238, 255, 161);" class="text-center">You need to enable popups for this site
                 to work. <span style="color:red">If this is your first time on the site, you may need to restart the
                     current episode after enabling pop-ups</span></p>
-            <p class="text-center">Looking to create a queue for a site other than Netflix? <a
-                    href="./everythingElse.html">click here</a></p>
-            <p>How often do you find yourself binging an entire series worth of content, only to get burnt out and never
-                finish? What if there was a way to rotate through all the shows you want to watch, all without needing
-                to
-                press
-                a single key or get up from the couch?</p>
-            <p>
-                Now there is! With this site, you'll be able to set up a rotation of shows, and watch that queue on loop
-                to
-                your
-                hearts content. No more, "I'm so sick of this show, I have to watch something else." Now you can watch
-                <i>New
-                    Girl</i>, <i>The Office</i>,
-                <i>Community</i>, or anything else, all at the same time, without having to manage a thing!
+            <p class="text-center">Looking to create a looping queue for Netflix? <a href="./index.html">click here</a>
             </p>
-
             <p>
-                After creating a list of shows to watch, it will play them sequentially on loop, with new episodes on
-                each viewing. This means that if you add <i>New Girl</i>, <i>The Office</i>, and then <i>Community</i>
-                to your list,
-                it will play one episode of <i>New Girl</i>, one episode of <i>The Office</i>, and then one episode of
-                <i>Community</i>,
-                then the <b>next</b> episode of <i>New Girl</i>, then the <b>next</b> episode of <i>The Office</i>, and
-                so on.
+                God, I swear Netflix is the only site that numbers its videos normally. I can't iterate through episodes
+                on any other site like I do there. It sucks because the best shows are off of Netflix now. This - This
+                site - is really more of a workaround than anything else. It'll go through the queue sequentially, just
+                a single loop. You'll have to add each individual episode to the queue, and it'll play it in order.
+                And like I said, I can't iterate through episodes on any other site the way I did with Netflix. So,
+                unlike the Netflix version of this site, this means that to watch more than one episode of a show,
+                you'll need to add all the episodes you want to watch. It's not rocket science. Go nuts.
             </p>
 
             <div id="addNewShow">
@@ -81,20 +66,17 @@
                         <label class="col-sm-2 col-form-label" for="name">Show Name:</label>
                         <div class="col-sm-10">
                             <input class="form-control" type="text" name="name" id="name"
-                                placeholder="Parks and Recreation" required>
+                                placeholder="Malcolm in the Middle" required>
                         </div>
                     </div>
 
                     <div class="form-group row">
                         <label class="col-sm-2 col-form-label" for="name">Show Link:</label>
                         <div class="col-sm-10">
-                            <img style="width: 100%;" src="./Images/netflix.PNG">
-                            <br>
-                            Open the show you want to add to your rotation (the specific episode you want to start with)
-                            and add it
-                            here!
+                            Open the show you want to add to your queue (the specific episode) and add it here!
                             <input class="form-control" type="text" name="link" id="link"
-                                placeholder="https://www.netflix.com/watch/70152005" required>
+                                placeholder="https://www.disneyplus.com/video/bbec14f3-ec63-43ad-960f-b4aa7daed44e"
+                                required>
                         </div>
                     </div>
 
@@ -111,20 +93,12 @@
                             The next show will be switched to after this interval has ended.
                         </div>
                     </div>
-
-                    <div class="form-group row">
-                        <label class="col-sm-2 col-form-label" for="name">Streaming service</label>
-                        <div class="col-sm-10">
-                            <select class="form-control" name="site" id="site">
-                                <option value="netflix">Netflix</option>
-                            </select>
-                        </div>
-                    </div>
                 </form>
                 <div class="container">
                     <div class="col-md-12 text-center">
                         <button id="add" class="btn btn-success text-right">Add to Queue</button>
                     </div>
+                    <p class="text-center" id="queueLength"></p>
                 </div>
             </div>
 
@@ -164,6 +138,7 @@
         const nextEpisodeButton = document.getElementById('nextEpisode');
 
         const showsAndData = [];
+        let queueLength = 0;
         let index = 0;
         let timeoutHandle;
 
@@ -207,6 +182,7 @@
             if (myWindow) {
                 myWindow.close();
             }
+
             incrementEpisode();
             playNextEpisode();
             timeoutHandle = setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
@@ -214,7 +190,6 @@
 
         restartButton.addEventListener('click', () => {
             clearTimeout(timeoutHandle);
-
             if (myWindow) {
                 myWindow.close();
             }
@@ -235,6 +210,7 @@
 
             document.getElementById("nowShowingTitle").innerText = "Now Showing:";
             document.getElementById("addNewShow").innerHTML = "";
+
             playNextEpisode();
             timeoutHandle = setTimeout(start, 1000 * 60 * showsAndData[index].showLength);
         });
@@ -244,18 +220,8 @@
             const showName = document.getElementById('name');
             const showLink = document.getElementById('link');
             const showLength = document.getElementById('length');
-            const showSite = document.getElementById('site');
 
             if (showName.value != '' && showLink.value != '') {
-                if (showSite.value == "netflix") {
-                    let re = new RegExp("https:\/\/www\.netflix\.com\/watch\/[0-9]+$");
-                    if (!re.test(showLink.value)) {
-                        alert("invalid URL format. Please follow the specified format.");
-                        return;
-                    }
-                    showLink.value += "?t=0";
-                }
-
                 startButton.disabled = false;
 
                 let length;
@@ -281,11 +247,14 @@
                     length = parseInt(showLength.value);
                 }
 
+                queueLength += length;
+                document.getElementById("queueLength").innerHTML = "<br>You will finish your queue in " + queueLength + " mins";
+
+                showLink.value += "?t=0";
                 showsAndData.push({
                     "name": showName.value,
                     "link": showLink.value,
                     "showLength": length,
-                    "site": showSite.value
                 });
 
                 const myItem = showName.value;
@@ -304,23 +273,9 @@
         });
 
         function incrementEpisode() {
-            if (showsAndData[index].site == "netflix") {
-                let videoNumber = parseInt(showsAndData[index].link.replace("https://www.netflix.com/watch/", ""));
-                showsAndData[index].link = "https://www.netflix.com/watch/" + ++videoNumber + "?t=0";
-            }
-
-            let list = document.getElementById('upNextList');
-
-            const listItem = document.createElement('li');
-            const listText = document.createElement('span');
-            listItem.classList.add("list-group-item");
-            listItem.appendChild(listText);
-            listText.textContent = showsAndData[index].name;
-            list.appendChild(listItem);
-
             index++;
             if (index == showsAndData.length) {
-                index = 0;
+                document.location.reload();
             }
         }
     </script>
